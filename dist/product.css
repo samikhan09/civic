@@ -33,3 +33,4 @@
 .category-art.road-home img{width:95.396px;height:64px;transform:scaleX(-1)}.category-art.road-home{overflow:visible}.banner-art{width:103.5px;height:69px}.banner-art img{width:auto;height:69px}.banner-art.road-banner{width:101.471px;height:69px}.banner-art.road-banner img{left:-28.02px;top:-20.16px;width:157.046px;height:105.36px}.report-evidence .gallery-dots{position:relative;z-index:2}.officer-card{display:flex;flex-direction:column}.home-content>.stack:last-child{gap:20px}
 .category-art.road-home img{position:static;left:auto;top:auto}.category-content{padding-top:24px}
 .view-confirmation h1,.view-email h1,.view-code h1,.view-updates h1,.view-location h1,.view-evidence h1,.view-submit h1,.view-share h1,.view-verify h1{line-height:40px}.view-confirmation .actions{gap:8px}
+.report-summary{flex:1;overflow:hidden}.report-summary>span{max-width:100%}
