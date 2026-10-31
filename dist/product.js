@@ -95,7 +95,7 @@ function openSheet(kind){
  let backdrop=false,startY=null;
  sheet.onpointerdown=e=>{backdrop=e.target===sheet&&(e.clientY<sheet.getBoundingClientRect().top||e.clientX<sheet.getBoundingClientRect().left||e.clientX>sheet.getBoundingClientRect().right);startY=e.target.closest('.sheet-intro')?e.clientY:null;};
  sheet.onpointerup=e=>{if(backdrop&&e.target===sheet||startY!==null&&e.clientY-startY>80)closeSheet();backdrop=false;startY=null;};
- sheet.showModal();document.body.style.overflow='hidden';
+ sheet.querySelector('#sheet-title').setAttribute('tabindex','-1');sheet.querySelector('#sheet-title').setAttribute('autofocus','');sheet.showModal();document.body.style.overflow='hidden';
 }
 
 function modal(html){$('#dialog').innerHTML=`<div class="stack">${html}<button class="btn secondary" id="dismiss">Close</button></div>`;$('#dismiss').onclick=()=>$('#dialog').close();$('#dialog').showModal();}
