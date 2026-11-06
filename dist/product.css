@@ -112,7 +112,7 @@ dialog.tutorial-sheet{border-radius:24px 24px 0 0;padding:24px 24px max(32px,env
 .home-content h2{font-size:16px;line-height:20px;font-weight:500}
 .home-content>section:last-of-type{gap:16px}
 .home-screen .filters{gap:12px}
-.home-screen .how-entry{box-shadow:none}
+.home-screen .how-entry{box-shadow:0 4px 4px rgba(23,25,24,.04)}
 .home-screen .civic-brand span{font-size:13.5px;line-height:18px;letter-spacing:-.54px}
 .home-screen .appbar>.icon-btn{display:none}
 
