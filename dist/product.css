@@ -140,7 +140,7 @@ dialog.tutorial-sheet{border-radius:24px 24px 0 0;padding:24px 24px max(32px,env
 
 /* Preserve scroll access on short phones and when the browser bars resize. */
 html{overflow-y:auto;overscroll-behavior-y:auto}
-body{min-height:100%;overflow-x:hidden}
+body{min-height:100%;overflow-x:clip}
 .screen{min-height:100vh;min-height:100dvh}
 .view-list{padding-bottom:calc(148px + env(safe-area-inset-bottom,0px))}
 .view-list .category-page{min-height:0}
