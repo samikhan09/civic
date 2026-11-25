@@ -153,3 +153,18 @@ body{min-height:100%;overflow-x:clip}
 .review-cards .category-choice{gap:12px}
 .review-cards .category-choice .icon{flex-shrink:0}
 .view-verify .compact-upload{height:82px;min-height:82px;gap:12px}
+
+/* Figma home and tutorial refinements. */
+.home-screen .civic-brand span{font-size:16px;line-height:24px;letter-spacing:-.72px;font-weight:600}
+.home-content section h2{font-size:16px;line-height:20px;font-weight:500}
+.home-screen .how-entry{font-size:14px;line-height:20px}
+.home-screen .category-art img[src="assets/waste.svg"]{transform:scale(1.18)}
+.home-screen .category-art img[src="assets/lights.svg"]{transform:scale(1.18)}
+.filters{flex-wrap:wrap;overflow:visible;row-gap:8px;min-height:0}
+.filters .filter{flex:none}
+.tutorial-copy{min-height:72px;gap:8px}
+.tutorial-copy>strong{font-size:16px;line-height:20px;font-weight:600}
+.tutorial-copy>p{font-size:14px;line-height:20px}
+.tutorial-nav .tutorial-arrow:disabled{opacity:1;background:#f3f5f2;border-color:#e4e8e2;cursor:default;box-shadow:none}
+.tutorial-nav .tutorial-arrow:disabled .icon{opacity:.25}
+.tutorial-nav .tutorial-arrow:disabled:active{transform:none;opacity:1}
