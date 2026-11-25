@@ -49,6 +49,12 @@ function photos(fs){return `<div class="photos">${fs.map((f,i)=>`<div class="pho
 function captureInputs(){return '';}
 function loadingScreen(kind){return '<main id="main" class="content loading-content" aria-busy="true" role="status">'+(kind==='checking'?'<small class="muted">Step 3 of 3</small>':'')+heading(kind==='checking'?'Checking details':'Submitting...',kind==='checking'?'We’re suggesting a category, description and department. You can review them before submitting.':'Keep this page open until you see your confirmation.')+'<div class="loading-row" aria-hidden="true"><div class="skeleton-image"></div><div class="skeleton-lines"><i></i><i></i><i></i></div></div>'+notice('This usually takes a moment','Keep this page open. Your report hasn’t been submitted yet.')+'</main>';}
 let tutorialSlide=0;
+function lockSheetScroll(){
+ const root=document.documentElement,body=document.body,scrollY=window.scrollY;
+ const rootOverflow=root.style.overflow,bodyStyle={overflow:body.style.overflow,position:body.style.position,top:body.style.top,width:body.style.width};
+ root.style.overflow='hidden';body.style.overflow='hidden';body.style.position='fixed';body.style.top=`-${scrollY}px`;body.style.width=root.clientWidth+'px';
+ return ()=>{root.style.overflow=rootOverflow;Object.assign(body.style,bodyStyle);window.scrollTo(0,scrollY);};
+}
 function tutorialNavigation(){return (tutorialSlide?btn(icon('tutorial-arrow'),'tutorial-prev','tutorial-arrow','aria-label="Previous slide"'):'')+(tutorialSlide===2?btn('File Complaint','tutorial-start'):btn(icon('tutorial-arrow'),'tutorial-next','tutorial-arrow','aria-label="Next slide"'));}
 function openTutorial(){
  const sheet=$('#sheet');
@@ -57,13 +63,13 @@ function openTutorial(){
   sheet.querySelectorAll('.tutorial-slide').forEach((slide,i)=>slide.setAttribute('aria-hidden',String(i!==tutorialSlide)));
   sheet.querySelector('.tutorial-nav').innerHTML=tutorialNavigation();return;
  }
- closeSheet();const old=document.body.style.overflow;
+ closeSheet();
  sheet.className='bottom-sheet tutorial-sheet';sheet.setAttribute('aria-labelledby','sheet-title');sheet.removeAttribute('aria-describedby');
  const captions=['File a new complaint by providing your location access, image of the issue and app will do the rest.','Get your complaint status on email or look at all reports section for the progress.','Once the issue is resolved, verify by capturing an image.'];
  sheet.innerHTML='<div class="tutorial-header"><h2 id="sheet-title" tabindex="-1" autofocus>How it works</h2><button class="icon-btn" data-action="sheet-close" aria-label="Close">'+icon('close')+'</button></div><div class="tutorial-viewport"><div class="tutorial-track">'+captions.map((copy,i)=>'<section class="tutorial-slide" aria-hidden="'+(i!==tutorialSlide)+'"><div class="tutorial-art tutorial-art-'+i+'"><div class="tutorial-illustration"><img src="assets/'+['tutorial-report','tutorial-track','tutorial-verify'][i]+'.svg" alt=""></div></div><div class="tutorial-copy"><strong class="tutorial-step">'+(i+1)+'</strong><p>'+copy+'</p></div></section>').join('')+'</div></div><div class="tutorial-nav">'+tutorialNavigation()+'</div>';
  sheet.onclick=e=>{const b=e.target.closest('[data-action]');if(!b)return;if(b.dataset.action==='sheet-close')closeSheet();else if(b.dataset.action==='tutorial-start'){closeSheet();action('start');}else action(b.dataset.action);};
- sheet.onpointerdown=null;sheet.onpointerup=null;sheet.onclose=()=>{document.body.style.overflow=old;sheet.onclick=null;};
- sheet.showModal();document.body.style.overflow='hidden';
+ sheet.onpointerdown=e=>{const rect=sheet.getBoundingClientRect();if(e.target===sheet&&(e.clientY<rect.top||e.clientX<rect.left||e.clientX>rect.right))closeSheet();};sheet.onpointerup=null;
+ sheet.showModal();const unlock=lockSheetScroll();sheet.onclose=()=>{unlock();sheet.onclick=null;};
 }
 function mainContent(){switch(view){case 'home':return `<main id="main" class="content home-content"><div class="tight" style="gap:8px"><h1>Let’s <span class="hero-muted">make<br>our city</span> better<br>together!</h1><p class="muted">Civic. allows citizens to submit complaints publicly and track them while remaining anonymous.</p></div><section class="stack" style="gap:16px"><div class="tight"><h2>Type of issues</h2></div><div class="categories">${categories.map((c,i)=>`<button class="category" data-category="${i}"><div class="category-art ${i===0?'road-home':''}"><img src="assets/${c[1]==='roads'?'roads-home':c[1]}.svg" alt=""></div><strong>${i===3?'Broken Streetlights':c[0]}</strong></button>`).join('')}</div></section><button class="how-entry" data-action="how"><span>How it works</span>${icon('chevron-right')}</button><section class="stack"><h2>All reports near you</h2>${searchBox()}${filters()}<div id="home-reports">${listRows(homeExpanded?undefined:3)}</div>${homeExpanded?'':btn('View all reports <img class="icon" src="assets/down.svg" alt="">','expand-reports','text-btn','aria-expanded="false" aria-controls="home-reports"')}</section></main><footer class="footer">${btn('File Complaint','start')}<div class="privacy"><img src="assets/shield.svg" alt="">Your identity stays private.</div></footer>`;
 case 'list':return `<main id="main" class="category-page">${category!==null?`<div class="category-hero banner-${categories[category][1]}"><header class="appbar"><button class="icon-btn" data-action="back" aria-label="Back">${icon('back')}</button></header><div class="banner"><div class="grow tight"><h2>${categories[category][0]}</h2><p>Submit or view all complaints submitted by other citizens.</p></div><span class="banner-art ${category===0?'road-banner':''}"><img src="assets/${category===0?'roads-banner':categories[category][1]+'-banner'}.svg" alt=""></span></div></div>`:'<h1>All reports</h1>'}<div class="content category-content"><div class="search-filters">${searchBox()}${filters()}</div><div id="results">${listRows()}</div></div></main><footer class="footer">${btn('File Complaint','start')}<div class="privacy"><img src="assets/shield.svg" alt="">Your identity stays private.</div></footer>`;
@@ -108,15 +114,13 @@ function sheetContent(kind){
 function closeSheet(){const sheet=$('#sheet');if(sheet?.open)sheet.close();}
 function openSheet(kind){
  const sheet=$('#sheet');if(!sheet||!selected)return;closeSheet();
- const previousOverflow=document.body.style.overflow;
  sheet.className='bottom-sheet sheet-'+kind;sheet.innerHTML=sheetContent(kind);sheet.setAttribute('aria-labelledby','sheet-title');sheet.setAttribute('aria-describedby','sheet-description');
  sheet.querySelectorAll('[data-action]').forEach(b=>b.onclick=()=>{const a=b.dataset.action;if(a==='sheet-close')closeSheet();else if(a==='sheet-email'){closeSheet();action('email');}else action(a);});
  const copy=sheet.querySelector('[data-sheet-action="copy"]');if(copy)copy.onclick=()=>action('copy');
- sheet.onclose=()=>{document.body.style.overflow=previousOverflow;};
  let backdrop=false,startY=null;
  sheet.onpointerdown=e=>{backdrop=e.target===sheet&&(e.clientY<sheet.getBoundingClientRect().top||e.clientX<sheet.getBoundingClientRect().left||e.clientX>sheet.getBoundingClientRect().right);startY=e.target.closest('.sheet-intro')?e.clientY:null;};
  sheet.onpointerup=e=>{if(backdrop&&e.target===sheet||startY!==null&&e.clientY-startY>80)closeSheet();backdrop=false;startY=null;};
- sheet.querySelector('#sheet-title').setAttribute('tabindex','-1');sheet.querySelector('#sheet-title').setAttribute('autofocus','');sheet.showModal();document.body.style.overflow='hidden';
+ sheet.querySelector('#sheet-title').setAttribute('tabindex','-1');sheet.querySelector('#sheet-title').setAttribute('autofocus','');sheet.showModal();const unlock=lockSheetScroll();sheet.onclose=unlock;
 }
 
 function modal(html){$('#dialog').innerHTML=`<div class="stack">${html}<button class="btn secondary" id="dismiss">Close</button></div>`;$('#dismiss').onclick=()=>$('#dialog').close();$('#dialog').showModal();}
