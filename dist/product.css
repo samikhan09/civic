@@ -157,11 +157,12 @@ body{min-height:100%;overflow-x:clip}
 /* Figma home and tutorial refinements. */
 .home-screen .civic-brand span{font-size:16px;line-height:24px;letter-spacing:-.72px;font-weight:600}
 .home-content section h2{font-size:16px;line-height:20px;font-weight:500}
-.home-screen .how-entry{font-size:14px;line-height:20px}
+.home-screen .how-entry>span{font-size:14px;line-height:20px;font-weight:500}
 .home-screen .category-art img[src="assets/waste.svg"]{transform:scale(1.18)}
 .home-screen .category-art img[src="assets/lights.svg"]{transform:scale(1.18)}
-.filters{flex-wrap:wrap;overflow:visible;row-gap:8px;min-height:0}
-.filters .filter{flex:none}
+.filters{flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;gap:12px;min-height:34px;margin-inline:-20px;padding-inline:20px;width:calc(100% + 40px);scroll-padding-inline:20px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.filters::-webkit-scrollbar{display:none}
+.filters .filter{flex:0 0 auto}
 .tutorial-copy{min-height:72px;gap:8px}
 .tutorial-copy>strong{font-size:16px;line-height:20px;font-weight:600}
 .tutorial-copy>p{font-size:14px;line-height:20px}
